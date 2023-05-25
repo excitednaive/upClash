@@ -51,7 +51,7 @@ jobs:
         git push
     - name: Purge jsdelivr CDN
       run: |
-        cd /bin/clashpre || exit 1
+        cd bin/clashpre || exit 1
         for file in $(ls); do
           curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@main/bin/clashpre/${file}"
         done
