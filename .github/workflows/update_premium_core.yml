@@ -53,7 +53,7 @@ jobs:
       run: |
         cd /bin/clashpre || exit 1
         for file in $(ls); do
-          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@main/${file}"
+          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@main/bin/clashpre/${file}"
         done
     - name: Cleanup Workflow
       uses: Mattraks/delete-workflow-runs@main
