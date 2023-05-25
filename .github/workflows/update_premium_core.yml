@@ -38,26 +38,25 @@ jobs:
         done
         mv -f ./tmp/clash-linux-arm64 ./tmp/clash-linux-armv8
         rm -fr upx*
-    - name: Create Release and Upload Release Asset
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: clash.premium
-        name: clash.premium
-        body: "The latest version of clash.premium core \n这是clash.premium的最新版本内核文件\nhttps://github.com/Dreamacro/clash/releases/tag/premium \nZip by upx\n使用了upx进行压缩\nOnly support for ShellClash\n仅限于ShellClash项目使用"
-        draft: false
-        prerelease: false
-        files: |
-          ./tmp/*
-          
+    - name: Update
+      run: |
+        rm -fr ./bin/clashpre/*
+        cp ./tmp/* ./bin/clashpre/
+        rm -fr ./tmp
+        sed -i "s/clashpre_v=.*/clashpre_v=$(./bin/clashpre/clash-linux-amd64 -v 2>/dev/null | sed 's/ linux.*//;s/.* //')/" bin/version
+    - name: Commit and push
+      run: |
+        git config --global user.email "excitingnaive@gmail.com" && git config --global user.name "Bot"
+        git add . && git commit -m "更新Premium内核至${download_version}" || exit 0
+        git push
     - name: Purge jsdelivr CDN
       run: |
-        cd tmp || exit 1
+        cd /bin/clashpre || exit 1
         for file in $(ls); do
-          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/${file}"
+          curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@main/${file}"
         done
-    
     - name: Cleanup Workflow
       uses: Mattraks/delete-workflow-runs@main
       with:
         retain_days: 1
-        keep_minimum_runs: 2          
+        keep_minimum_runs: 2   
